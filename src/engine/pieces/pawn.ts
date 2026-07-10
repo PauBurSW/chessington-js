@@ -11,10 +11,18 @@ export default class Pawn extends Piece {
     public getAvailableMoves(board: Board) {
         const availableMoves:Array<Square> = new Array(0);
         const currentSquare = board.findPiece(this);
-        if (this.player == Player.WHITE)
+        if (this.player == Player.WHITE) {
             availableMoves.push(Square.at(currentSquare.row + 1, currentSquare.col));
-        if (this.player == Player.BLACK)
+            if (!board.movedPieces.includes(this)) {
+                availableMoves.push(Square.at(currentSquare.row + 2, currentSquare.col));
+            }
+        }
+        if (this.player == Player.BLACK) {
             availableMoves.push(Square.at(currentSquare.row - 1, currentSquare.col));
+            if (!board.movedPieces.includes(this)) {
+                availableMoves.push(Square.at(currentSquare.row - 2, currentSquare.col));
+            }
+        }
         return availableMoves;
     }
 }

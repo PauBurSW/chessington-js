@@ -4,12 +4,14 @@ import Square from './square';
 import Piece from './pieces/piece';
 
 export default class Board {
+    public movedPieces:Array<Piece>;
     public currentPlayer: Player;
     private readonly board: (Piece | undefined)[][];
 
-    public constructor(currentPlayer:Player) {
+    public constructor(currentPlayer:Player | undefined = undefined) {
         this.currentPlayer = currentPlayer ? currentPlayer : Player.WHITE;
         this.board = this.createBoard();
+        this.movedPieces = Array(0);
     }
 
     public setPiece(square: Square, piece: Piece | undefined) {
@@ -37,6 +39,7 @@ export default class Board {
             this.setPiece(toSquare, movingPiece);
             this.setPiece(fromSquare, undefined);
             this.currentPlayer = (this.currentPlayer === Player.WHITE ? Player.BLACK : Player.WHITE);
+            this.movedPieces.push(movingPiece);
         }
     }
 
