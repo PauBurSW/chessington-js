@@ -21,21 +21,22 @@ export default class Queen extends Piece {
         super(player);
     }
 
-    private addMoves(direction:queenDirections, availableMoves:Array<Square>, startRow:number, startCol:number) {
-        for (let i = 1; this.isInBounds(startRow + i * queenMoves[direction][0] , startCol + i * queenMoves[direction][1]); i++)
+    private addMoves(direction:queenDirections, availableMoves:Array<Square>, startRow:number, startCol:number, board:Board) {
+        for (let i = 1; this.isInBounds(startRow + i * queenMoves[direction][0] , startCol + i * queenMoves[direction][1]) &&
+            !board.getPiece(Square.at(startRow + i * queenMoves[direction][0] , startCol + i * queenMoves[direction][1])); i++)
             availableMoves.push(Square.at(startRow + i * queenMoves[direction][0], startCol + i * queenMoves[direction][1]));
     }
     public getAvailableMoves(board: Board) {
         const availableMoves:Array<Square> = new Array();
         const currentSquare = board.findPiece(this);
-        this.addMoves('Up', availableMoves, currentSquare.row, currentSquare.col);
-        this.addMoves('Down', availableMoves, currentSquare.row, currentSquare.col);
-        this.addMoves('Right', availableMoves, currentSquare.row, currentSquare.col);
-        this.addMoves('Left', availableMoves, currentSquare.row, currentSquare.col);
-        this.addMoves('UpRight', availableMoves, currentSquare.row, currentSquare.col);
-        this.addMoves('UpLeft', availableMoves, currentSquare.row, currentSquare.col);
-        this.addMoves('DownRight', availableMoves, currentSquare.row, currentSquare.col);
-        this.addMoves('DownLeft', availableMoves, currentSquare.row, currentSquare.col);
+        this.addMoves('Up', availableMoves, currentSquare.row, currentSquare.col, board);
+        this.addMoves('Down', availableMoves, currentSquare.row, currentSquare.col, board);
+        this.addMoves('Right', availableMoves, currentSquare.row, currentSquare.col, board);
+        this.addMoves('Left', availableMoves, currentSquare.row, currentSquare.col, board);
+        this.addMoves('UpRight', availableMoves, currentSquare.row, currentSquare.col, board);
+        this.addMoves('UpLeft', availableMoves, currentSquare.row, currentSquare.col, board);
+        this.addMoves('DownRight', availableMoves, currentSquare.row, currentSquare.col, board);
+        this.addMoves('DownLeft', availableMoves, currentSquare.row, currentSquare.col, board);
         return availableMoves;
     }
 }

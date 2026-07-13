@@ -3,6 +3,7 @@ import Player from '../player';
 import Board from '../board';
 import GameSettings from '../gameSettings';
 import Square from '../square';
+import King from './king';
 
 type rookDirections = "Up" | "Down" | "Right" | "Left";
 const rookMoves: Record<rookDirections, number[]> = {
@@ -17,18 +18,26 @@ export default class Rook extends Piece {
         super(player);
     }
 
-    private addMoves(direction:rookDirections, availableMoves:Array<Square>, startRow:number, startCol:number) {
-        for (let i = 1; this.isInBounds(startRow + i * rookMoves[direction][0] , startCol + i * rookMoves[direction][1]); i++)
-            availableMoves.push(Square.at(startRow + i * rookMoves[direction][0], startCol + i * rookMoves[direction][1]));
+
+    private addMoves(direction:rookDirections, availableMoves:Array<Square>, startRow:number, startCol:number, board:Board) {
+        for (let i = 1; this.isInBounds(startRow + i * rookMoves[direction][0] , startCol + i * rookMoves[direction][1]); i++) {
+                if (board.getPiece(Square.at(startRow + i * rookMoves[direction][0] , startCol + i * rookMoves[direction][1]))) {
+                    if (board.getPiece(Square.at(startRow + i * rookMoves[direction][0] , startCol + i * rookMoves[direction][1]))?.player != this.player
+                        && !(board.getPiece(Square.at(startRow + i * rookMoves[direction][0] , startCol + i * rookMoves[direction][1])) instanceof King))
+                        availableMoves.push(Square.at(startRow + i * rookMoves[direction][0], startCol + i * rookMoves[direction][1]));
+                    break;
+                }
+                availableMoves.push(Square.at(startRow + i * rookMoves[direction][0], startCol + i * rookMoves[direction][1]));
+            }
     }
 
     public getAvailableMoves(board: Board) {
         const availableMoves:Array<Square> = new Array();
         const currentSquare = board.findPiece(this);
-        this.addMoves('Up', availableMoves, currentSquare.row, currentSquare.col);
-        this.addMoves('Down', availableMoves, currentSquare.row, currentSquare.col);
-        this.addMoves('Right', availableMoves, currentSquare.row, currentSquare.col);
-        this.addMoves('Left', availableMoves, currentSquare.row, currentSquare.col);
+        this.addMoves('Up', availableMoves, currentSquare.row, currentSquare.col, board);
+        this.addMoves('Down', availableMoves, currentSquare.row, currentSquare.col, board);
+        this.addMoves('Right', availableMoves, currentSquare.row, currentSquare.col, board);
+        this.addMoves('Left', availableMoves, currentSquare.row, currentSquare.col, board);
         return availableMoves;
     }
 }
