@@ -3,6 +3,7 @@ import Player from '../player';
 import Board from '../board';
 import GameSettings from '../gameSettings';
 import Square from '../square';
+import King from './king';
 
 type queenDirections = "UpRight" | "Up" | "UpLeft" | "DownRight" | "Down" | "DownLeft" | "Right" | "Left";
 const queenMoves: Record<queenDirections, number[]> = {
@@ -22,9 +23,15 @@ export default class Queen extends Piece {
     }
 
     private addMoves(direction:queenDirections, availableMoves:Array<Square>, startRow:number, startCol:number, board:Board) {
-        for (let i = 1; this.isInBounds(startRow + i * queenMoves[direction][0] , startCol + i * queenMoves[direction][1]) &&
-            !board.getPiece(Square.at(startRow + i * queenMoves[direction][0] , startCol + i * queenMoves[direction][1])); i++)
-            availableMoves.push(Square.at(startRow + i * queenMoves[direction][0], startCol + i * queenMoves[direction][1]));
+        for (let i = 1; this.isInBounds(startRow + i * queenMoves[direction][0] , startCol + i * queenMoves[direction][1]); i++) {
+                if (board.getPiece(Square.at(startRow + i * queenMoves[direction][0] , startCol + i * queenMoves[direction][1]))) {
+                    if (board.getPiece(Square.at(startRow + i * queenMoves[direction][0] , startCol + i * queenMoves[direction][1]))?.player != this.player
+                        && !(board.getPiece(Square.at(startRow + i * queenMoves[direction][0] , startCol + i * queenMoves[direction][1])) instanceof King))
+                        availableMoves.push(Square.at(startRow + i * queenMoves[direction][0], startCol + i * queenMoves[direction][1]));
+                            break;
+                    }
+                availableMoves.push(Square.at(startRow + i * queenMoves[direction][0], startCol + i * queenMoves[direction][1]));
+            }
     }
     public getAvailableMoves(board: Board) {
         const availableMoves:Array<Square> = new Array();

@@ -14,7 +14,7 @@ export default class Pawn extends Piece {
 
     public getAvailableMoves(board: Board) {
         const availableMoves:Array<Square> = new Array();
-        const currentSquare = board.findPiece(this);
+        const currentSquare:Square = board.findPiece(this);
         if (this.player == Player.WHITE) {
             const isNextOccupied = currentSquare.row + Pawn.SHORTSTEP < GameSettings.BOARD_SIZE? !!board.getPiece(Square.at(currentSquare.row + Pawn.SHORTSTEP, currentSquare.col)) : true;
             if (currentSquare.row + Pawn.SHORTSTEP < GameSettings.BOARD_SIZE && !isNextOccupied) {
@@ -24,8 +24,7 @@ export default class Pawn extends Piece {
                     availableMoves.push(Square.at(currentSquare.row + Pawn.LONGSTEP, currentSquare.col));
                 }
             }
-        }
-        if (this.player == Player.BLACK) {
+        } else {
             const isNextOccupied = currentSquare.row - Pawn.SHORTSTEP >= 0? !!board.getPiece(Square.at(currentSquare.row - Pawn.SHORTSTEP, currentSquare.col)) : true;
             if (!isNextOccupied) {
                 availableMoves.push(Square.at(currentSquare.row - Pawn.SHORTSTEP, currentSquare.col));

@@ -3,9 +3,10 @@ import Player from '../player';
 import Board from '../board';
 import GameSettings from '../gameSettings';
 import Square from '../square';
+import King from './king';
 
 type knightDirections = "ShortUpLeft" | "LongUpLeft" | "LongUpRight" | "ShortUpRight" | "ShortDownRight" | "LongDownRight" | "ShortDownLeft" | "LongDownLeft";
-const kingMoves: Record<knightDirections, number[]> = {
+const knightMoves: Record<knightDirections, number[]> = {
     ShortUpLeft: [-1, -2],
     LongUpLeft: [-2, -1],
     ShortUpRight: [-1, 2],
@@ -21,22 +22,23 @@ export default class Knight extends Piece {
         super(player);
     }
 
-    private addMoves(direction:knightDirections, availableMoves:Array<Square>, row:number, col:number) {
-        if (this.isInBounds(row, col))
-            availableMoves.push(Square.at(row + kingMoves[direction][0], col + kingMoves[direction][1]));
+    private addMoves(direction:knightDirections, availableMoves:Array<Square>, row:number, col:number, board:Board) {
+        if (this.isInBounds(row + knightMoves[direction][0], col + knightMoves[direction][1]) && board.getPiece(Square.at(row + knightMoves[direction][0] , col + knightMoves[direction][1]))?.player != this.player
+                            && !(board.getPiece(Square.at(row + knightMoves[direction][0] , col + knightMoves[direction][1])) instanceof King))
+            availableMoves.push(Square.at(row + knightMoves[direction][0], col + knightMoves[direction][1]));
     }
 
     public getAvailableMoves(board: Board) {
         const availableMoves:Array<Square> = new Array();
         const currentSquare = board.findPiece(this);
-        this.addMoves('ShortUpRight', availableMoves, currentSquare.row, currentSquare.col);
-        this.addMoves('LongUpRight', availableMoves, currentSquare.row, currentSquare.col);
-        this.addMoves('ShortUpLeft', availableMoves, currentSquare.row, currentSquare.col);
-        this.addMoves('LongUpLeft', availableMoves, currentSquare.row, currentSquare.col);
-        this.addMoves('ShortDownRight', availableMoves, currentSquare.row, currentSquare.col);
-        this.addMoves('LongDownRight', availableMoves, currentSquare.row, currentSquare.col);
-        this.addMoves('ShortDownLeft', availableMoves, currentSquare.row, currentSquare.col);
-        this.addMoves('LongDownLeft', availableMoves, currentSquare.row, currentSquare.col);
+        this.addMoves('ShortUpRight', availableMoves, currentSquare.row, currentSquare.col, board);
+        this.addMoves('LongUpRight', availableMoves, currentSquare.row, currentSquare.col, board);
+        this.addMoves('ShortUpLeft', availableMoves, currentSquare.row, currentSquare.col, board);
+        this.addMoves('LongUpLeft', availableMoves, currentSquare.row, currentSquare.col, board);
+        this.addMoves('ShortDownRight', availableMoves, currentSquare.row, currentSquare.col, board);
+        this.addMoves('LongDownRight', availableMoves, currentSquare.row, currentSquare.col, board);
+        this.addMoves('ShortDownLeft', availableMoves, currentSquare.row, currentSquare.col, board);
+        this.addMoves('LongDownLeft', availableMoves, currentSquare.row, currentSquare.col, board);
         return availableMoves;
     }
 }

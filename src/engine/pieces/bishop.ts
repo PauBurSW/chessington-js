@@ -6,11 +6,15 @@ import GameSettings from '../gameSettings';
 import King from './king';
 
 type bishopDirections = "UpRight" | "UpLeft" | "DownRight" | "DownLeft";
-const bishopMoves: Record<bishopDirections, number[]> = {
-    UpRight: [1, 1],
-    UpLeft: [1, -1],
-    DownRight: [-1, 1],
-    DownLeft: [-1, -1]
+type dimensions = {
+    row:number;
+    col:number;
+}
+const bishopMoves: Record<bishopDirections, dimensions> = {
+    UpRight: {row:1, col:1},
+    UpLeft: {row:1, col:-1},
+    DownRight: {row:-1, col:1},
+    DownLeft:{row:-1, col:-1}
 }
 
 export default class Bishop extends Piece {
@@ -18,25 +22,27 @@ export default class Bishop extends Piece {
         super(player);
     }
 
-    private addMoves(direction:bishopDirections, availableMoves:Array<Square>, startRow:number, startCol:number, board:Board) {
-        for (let i = 1; this.isInBounds(startRow + i * bishopMoves[direction][0] , startCol + i * bishopMoves[direction][1]); i++) {
-                if (board.getPiece(Square.at(startRow + i * bishopMoves[direction][0] , startCol + i * bishopMoves[direction][1]))) {
-                    if (board.getPiece(Square.at(startRow + i * bishopMoves[direction][0] , startCol + i * bishopMoves[direction][1]))?.player != this.player
-                        && !(board.getPiece(Square.at(startRow + i * bishopMoves[direction][0] , startCol + i * bishopMoves[direction][1])) instanceof King))
-                        availableMoves.push(Square.at(startRow + i * bishopMoves[direction][0], startCol + i * bishopMoves[direction][1]));
+    private addMoves(direction:bishopDirections, startSquare:Square, board:Board) {
+        const availableMoves:Array<Square> = new Array();
+        for (let i = 1; this.isInBounds(startSquare.row + i * bishopMoves[direction].row, startSquare.col + i * bishopMoves[direction].col); i++) {
+                if (board.getPiece(Square.at(startSquare.row + i * bishopMoves[direction].row , startSquare.col + i * bishopMoves[direction].col))) {
+                    if (board.getPiece(Square.at(startSquare.row + i * bishopMoves[direction].row , startSquare.col + i * bishopMoves[direction].col))?.player != this.player
+                        && !(board.getPiece(Square.at(startSquare.row + i * bishopMoves[direction].row , startSquare.col + i * bishopMoves[direction].col)) instanceof King))
+                        availableMoves.push(Square.at(startSquare.row + i * bishopMoves[direction].row, startSquare.col + i * bishopMoves[direction].col));
                     break;
                 }
-                availableMoves.push(Square.at(startRow + i * bishopMoves[direction][0], startCol + i * bishopMoves[direction][1]));
+                availableMoves.push(Square.at(startSquare.row + i * bishopMoves[direction].row, startSquare.col + i * bishopMoves[direction].col));
             }
+        return availableMoves;
     }
 
     public getAvailableMoves(board: Board) {
         const availableMoves:Array<Square> = new Array();
         const currentSquare = board.findPiece(this);
-        this.addMoves('UpRight', availableMoves, currentSquare.row, currentSquare.col, board);
-        this.addMoves('UpLeft', availableMoves, currentSquare.row, currentSquare.col, board);
-        this.addMoves('DownRight', availableMoves, currentSquare.row, currentSquare.col, board);
-        this.addMoves('DownLeft', availableMoves, currentSquare.row, currentSquare.col, board);
-        return availableMoves;
+        const availableMoves1:Array<Square> = availableMoves.concat(this.addMoves('UpRight', currentSquare, board));
+        const availableMoves2:Array<Square> = availableMoves1.concat(this.addMoves('UpLeft', currentSquare, board));
+        const availableMoves3:Array<Square> = availableMoves2.concat(this.addMoves('DownRight', currentSquare, board));
+        const availableMoves4:Array<Square> = availableMoves3.concat(this.addMoves('DownLeft', currentSquare, board));
+        return availableMoves4;
     }
 }

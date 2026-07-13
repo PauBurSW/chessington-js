@@ -20,13 +20,7 @@ export default class Piece {
     }
 
     protected isInBounds(row:number, col:number) {
-        if (row >= GameSettings.BOARD_SIZE)
-            return false;
-        if (row < 0)
-            return false;
-        if (col >= GameSettings.BOARD_SIZE)
-            return false;
-        if (col < 0)
+        if (row >= GameSettings.BOARD_SIZE || row < 0 || col >= GameSettings.BOARD_SIZE || col < 0)
             return false;
         return true;
     }
