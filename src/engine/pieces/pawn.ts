@@ -15,15 +15,23 @@ export default class Pawn extends Piece {
         const availableMoves:Array<Square> = new Array();
         const currentSquare = board.findPiece(this);
         if (this.player == Player.WHITE) {
-            availableMoves.push(Square.at(currentSquare.row + Pawn.SHORTSTEP, currentSquare.col));
-            if (!board.movedPieces.includes(this)) {
-                availableMoves.push(Square.at(currentSquare.row + Pawn.LONGSTEP, currentSquare.col));
+            const isNextOccupied = !!board.getPiece(Square.at(currentSquare.row + Pawn.SHORTSTEP, currentSquare.col));
+            if (!isNextOccupied) {
+                availableMoves.push(Square.at(currentSquare.row + Pawn.SHORTSTEP, currentSquare.col));
+                const isNextTwoOccupied = !!board.getPiece(Square.at(currentSquare.row + Pawn.LONGSTEP, currentSquare.col));
+                if (!board.movedPieces.includes(this) && !isNextTwoOccupied) {
+                    availableMoves.push(Square.at(currentSquare.row + Pawn.LONGSTEP, currentSquare.col));
+                }
             }
         }
         if (this.player == Player.BLACK) {
-            availableMoves.push(Square.at(currentSquare.row - Pawn.SHORTSTEP, currentSquare.col));
-            if (!board.movedPieces.includes(this)) {
-                availableMoves.push(Square.at(currentSquare.row - Pawn.LONGSTEP, currentSquare.col));
+            const isNextOccupied = !!board.getPiece(Square.at(currentSquare.row - Pawn.SHORTSTEP, currentSquare.col));
+            if (!isNextOccupied) {
+                availableMoves.push(Square.at(currentSquare.row - Pawn.SHORTSTEP, currentSquare.col));
+                const isNextTwoOccupied = !!board.getPiece(Square.at(currentSquare.row - Pawn.LONGSTEP, currentSquare.col));
+                if (!board.movedPieces.includes(this) && !isNextTwoOccupied) {
+                    availableMoves.push(Square.at(currentSquare.row - Pawn.LONGSTEP, currentSquare.col));
+                }
             }
         }
         return availableMoves;
